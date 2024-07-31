@@ -1,0 +1,22 @@
+{
+    "name": "aa-examples",
+    "version": "0.0.0",
+    "description": "Account Abstraction Cartesi Examples",
+    "private": true,
+    "scripts": {
+        "build": "turbo build",
+        "dev": "turbo dev --no-cache --continue",
+        "test": "turbo test"
+    },
+    "keywords": [
+        "cartesi",
+        "ERC-4337"
+    ],
+    "author": "Danilo Tuler",
+    "license": "MIT",
+    "packageManager": "pnpm@9.6.0",
+    "devDependencies": {
+        "prettier": "^3.3.3",
+        "turbo": "^2.0.10"
+    }
+}
