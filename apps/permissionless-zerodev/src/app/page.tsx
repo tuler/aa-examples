@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { isHex, stringToHex } from "viem";
-import { useAccount, useConnect, useDisconnect } from "wagmi";
+import { formatUnits, isHex, stringToHex } from "viem";
+import { useAccount, useBalance, useConnect, useDisconnect } from "wagmi";
 import { useInputBoxAddInput } from "@/cartesi";
 
 function App() {
@@ -28,6 +28,11 @@ function App() {
             "0xab7528bb862fb57e8a2bcd567a2e929a0be56a5e",
             isHex(payload) ? payload : stringToHex(payload),
         ],
+    });
+
+    const { data: balance } = useBalance({
+        address: smartAccountClient?.account.address,
+        query: { enabled: !!smartAccountClient },
     });
 
     return (
@@ -86,6 +91,15 @@ function App() {
                 <div>
                     Smart Account Address:
                     <text>{smartAccountClient?.account.address}</text>
+                </div>
+                <div>
+                    Smart Account Balance:
+                    {balance && (
+                        <text>
+                            {formatUnits(balance.value, balance.decimals)}{" "}
+                            {balance.symbol}
+                        </text>
+                    )}
                 </div>
             </div>
 
