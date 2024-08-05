@@ -1,14 +1,23 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { formatUnits, isHex, stringToHex } from "viem";
-import { useAccount, useBalance, useConnect, useDisconnect } from "wagmi";
+import {
+    useAccount,
+    useBalance,
+    useBlockNumber,
+    useConnect,
+    useDisconnect,
+} from "wagmi";
 import { useInputBoxAddInput } from "@/cartesi";
+import { useQueryClient } from "@tanstack/react-query";
 
 function App() {
     const account = useAccount();
     const { connectors, connect, status, error } = useConnect();
+    const queryClient = useQueryClient();
     const { disconnect } = useDisconnect();
+    const { data: blockNumber } = useBlockNumber({ watch: true });
 
     const [bundlerUrl, setBundlerUrl] = useState<string>(
         "http://localhost:8080/bundler/rpc",
@@ -30,10 +39,14 @@ function App() {
         ],
     });
 
-    const { data: balance } = useBalance({
+    const { data: balance, queryKey } = useBalance({
         address: smartAccountClient?.account.address,
         query: { enabled: !!smartAccountClient },
     });
+
+    useEffect(() => {
+        queryClient.invalidateQueries({ queryKey });
+    }, [blockNumber, queryClient]);
 
     return (
         <>
@@ -46,6 +59,8 @@ function App() {
                     addresses: {JSON.stringify(account.addresses)}
                     <br />
                     chainId: {account.chainId}
+                    <br />
+                    blockNumber: {blockNumber?.toString()}
                 </div>
 
                 {account.status === "connected" && (
