@@ -16,13 +16,14 @@ function App() {
     const [paymasterUrl, setPaymasterUrl] = useState<string>(
         "http://localhost:8080/paymaster/",
     );
+    const [usePaymaster, setUsePaymaster] = useState<boolean>(true);
 
     const [payload, setPayload] = useState<string>("hello");
 
     // transaction through hook
     const { hash, smartAccountClient, write } = useInputBoxAddInput({
         bundlerUrl,
-        paymasterUrl,
+        paymasterUrl: usePaymaster ? paymasterUrl : undefined,
         args: [
             "0xab7528bb862fb57e8a2bcd567a2e929a0be56a5e",
             isHex(payload) ? payload : stringToHex(payload),
@@ -97,6 +98,14 @@ function App() {
                         onChange={(e) => setPayload(e.target.value)}
                     />
                 </div>
+                <input
+                    type="checkbox"
+                    id="usePaymaster"
+                    checked={usePaymaster}
+                    onChange={() => setUsePaymaster(!usePaymaster)}
+                />
+                <label htmlFor="usePaymaster">Use Paymaster</label>
+                <br />
                 <button onClick={() => write?.()} disabled={!write}>
                     Send Input
                 </button>

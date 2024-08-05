@@ -19,7 +19,7 @@ import { http, usePublicClient, useWalletClient } from "wagmi";
 
 export type SmartAccountClientOptions = {
     bundlerUrl: string;
-    paymasterUrl: string;
+    paymasterUrl?: string;
 };
 
 export const useSmartAccountClient = <
@@ -33,14 +33,16 @@ export const useSmartAccountClient = <
     options: SmartAccountClientOptions,
 ) => {
     const { bundlerUrl, paymasterUrl } = options;
-    const publicClient = usePublicClient({ chainId: 31337 });
+    const publicClient = usePublicClient();
     const { data: walletClient } = useWalletClient();
 
     // create paymaster client
-    const paymasterClient = createPimlicoPaymasterClient({
-        transport: http(paymasterUrl),
-        entryPoint: ENTRYPOINT_ADDRESS_V07,
-    });
+    const paymasterClient = paymasterUrl
+        ? createPimlicoPaymasterClient({
+              transport: http(paymasterUrl),
+              entryPoint: ENTRYPOINT_ADDRESS_V07,
+          })
+        : undefined;
 
     // create bundler client
     const pimlicoBundlerClient = createPimlicoBundlerClient({
@@ -73,7 +75,7 @@ export const useSmartAccountClient = <
                 entryPoint: ENTRYPOINT_ADDRESS_V07,
                 bundlerTransport: http(bundlerUrl),
                 middleware: {
-                    sponsorUserOperation: paymasterClient.sponsorUserOperation, // optional
+                    sponsorUserOperation: paymasterClient?.sponsorUserOperation, // optional
                     gasPrice: async () =>
                         (await pimlicoBundlerClient.getUserOperationGasPrice())
                             .fast, // use pimlico bundler to get gas prices

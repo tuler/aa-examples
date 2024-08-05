@@ -5,7 +5,7 @@ import { inputBoxAbi, inputBoxAddress } from "./rollups";
 
 export type InputBoxAddInputOptions = {
     bundlerUrl: string;
-    paymasterUrl: string;
+    paymasterUrl?: string;
     args: readonly [Address, Hex];
 };
 
